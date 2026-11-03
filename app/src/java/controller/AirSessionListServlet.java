@@ -30,7 +30,7 @@ public class AirSessionListServlet extends HttpServlet {
     private static final int PAGE_SIZE = 10;
     private final AirSessionDAO dao = new AirSessionDAO();
     private final dao.DeviceDAO deviceDAO = new dao.DeviceDAO();
-    private final dao.LabelDAO labelDAO = new dao.LabelDAO();
+    
     
     private String action(HttpServletRequest req) {
         String path = req.getRequestURI().substring(req.getContextPath().length());
@@ -55,11 +55,7 @@ public class AirSessionListServlet extends HttpServlet {
         req.setAttribute("detail", session);
         req.setAttribute("device", deviceDAO.findById(session.getDeviceId()));
         req.setAttribute("timeline", dao.findTimeline(session.getDeviceId(), 15));
-        List<model.AirLabel> labelHistory = new java.util.ArrayList<>();
-        try {
-            labelHistory = labelDAO.findBySessionId(session.getSessionId());
-        } catch (Exception ignored) {}
-        req.setAttribute("labelHistory", labelHistory != null ? labelHistory : new java.util.ArrayList<>());
+        
         req.getRequestDispatcher("/WEB-INF/views/sessionDetail.jsp").forward(req, resp);
     }
     
