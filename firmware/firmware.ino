@@ -16,8 +16,8 @@ const char* cmdEndpoint    = "/Airroom/device/command";
 const char* dataEndpoint   = "/Airroom/device/data";
 
 // Thông tin định danh thiết bị (phải khớp chính xác trong Database AirRoomDB)
-const char* deviceCode = "D133";
-const char* apiKey     = "key-d133-b45khsa2c7dc62wf";
+const char* deviceCode = "D001";
+const char* apiKey     = "demo-key-d001";
 
 // ================= 3. CẤU HÌNH CHÂN CẮM & NGOẠI VI (KHÔNG ĐỔI) =================
 #define DHTPIN 15         // Chân DATA DHT22 cắm GPIO15
