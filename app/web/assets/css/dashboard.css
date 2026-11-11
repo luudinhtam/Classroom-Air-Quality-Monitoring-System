@@ -204,7 +204,7 @@ body.sidebar-collapsed .sidebar {
     margin-left: 235px;
     width: calc(100% - 235px);
     min-width: 0;
-    padding: 20px 26px 36px 26px;
+    padding: 22px 28px 48px;
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -379,6 +379,7 @@ body.sidebar-collapsed .main-content {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    flex-shrink: 0;
 }
 
 .title-text-group {

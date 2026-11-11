@@ -248,7 +248,7 @@ function renderRoomCard(room) {
                     </div>
                     <div class="metric-col-data">
                         <span class="metric-val">${room.co2 != null ? room.co2 + ' ppm' : '--'}</span>
-                        <span class="metric-name">CO₂</span>
+                        <span class="metric-name">CO\u2082</span>
                     </div>
                 </div>
 

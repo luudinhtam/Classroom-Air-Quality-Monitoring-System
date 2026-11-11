@@ -432,8 +432,6 @@ body.sidebar-collapsed .main-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 4px;
-    flex-shrink: 0;
 }
 
 .title-left-group {
@@ -445,8 +443,8 @@ body.sidebar-collapsed .main-content {
 .title-icon-box {
     width: 44px;
     height: 44px;
+    border-radius: var(--radius-lg, 10px);
     background: var(--primary-blue);
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -459,12 +457,13 @@ body.sidebar-collapsed .main-content {
     flex-direction: column;
 }
 
-.page-main-heading {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text-main);
+.page-main-heading,
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary, var(--text-main, #0f1b3d));
+    letter-spacing: -0.4px;
     line-height: 1.15;
-    letter-spacing: -0.3px;
 }
 
 .page-subheading {

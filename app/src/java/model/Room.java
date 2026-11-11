@@ -64,6 +64,10 @@ public class Room {
         return code;
     }
 
+    public String getRoomCode() {
+        return code;
+    }
+
     public void setCode(String code) {
         this.code = code;
     }

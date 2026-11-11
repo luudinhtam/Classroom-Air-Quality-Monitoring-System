@@ -70,6 +70,33 @@ body.sidebar-collapsed .main-content {
     box-sizing: border-box !important;
 }
 
+.page-title-section {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-top: 0 !important;
+}
+
+.page-main-heading {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: var(--text-primary, var(--text-main, #0f1b3d)) !important;
+    letter-spacing: -0.4px !important;
+    line-height: 1.15 !important;
+}
+
+.title-icon-box {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: var(--radius-lg, 10px) !important;
+    background: var(--primary-blue, #2563eb) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25) !important;
+    flex-shrink: 0 !important;
+}
+
 /* 2. STATS CARDS (Always 1 row) & AMBER THEME */
 .stats-cards-grid {
     display: grid !important;

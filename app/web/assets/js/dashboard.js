@@ -43,13 +43,13 @@ const history = (window.DASHBOARD_DATA && Array.isArray(window.DASHBOARD_DATA.hi
 // Metric chart specifications
 const METRICS_CONFIG = {
     co2: {
-        name: "CO₂",
+        name: "CO\u2082",
         unit: "ppm",
-        yTitle: "CO₂ (ppm)",
+        yTitle: "CO\u2082 (ppm)",
         yMin: 0,
         yMax: 2000,
         ySteps: [0, 500, 1000, 1500, 2000],
-        allowedText: "Allowed: ≤ 1000 ppm",
+        allowedText: "Allowed: \u2264 1000 ppm",
         color: "#16a34a",
         softBg: "#dcfce7",
         iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>`,
@@ -62,7 +62,7 @@ const METRICS_CONFIG = {
         yMin: 0,
         yMax: 10,
         ySteps: [0, 2, 4, 6, 8, 10],
-        allowedText: "Allowed: ≤ 10 ppm",
+        allowedText: "Allowed: \u2264 10 ppm",
         color: "#8b5cf6",
         softBg: "#ede9fe",
         iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg>`,
@@ -88,7 +88,7 @@ const METRICS_CONFIG = {
         yMin: 0,
         yMax: 100,
         ySteps: [0, 20, 40, 60, 80, 100],
-        allowedText: "Allowed: 40 – 70%",
+        allowedText: "Allowed: 40 \u2013 70%",
         color: "#2563eb",
         softBg: "#eff6ff",
         iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
@@ -278,7 +278,7 @@ function renderDiffRow(elementId, diff, type) {
 
     if (diff === 0) {
         el.className = "stat-diff-row diff-no-change";
-        el.innerHTML = `<span>—</span><span>No change vs. last hour</span>`;
+        el.innerHTML = `<span>\u2014</span><span>No change vs. last hour</span>`;
         return;
     }
 

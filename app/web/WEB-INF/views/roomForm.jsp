@@ -10,6 +10,13 @@
     boolean isNew = (item == null);
     List<Device> deviceList = (List<Device>) request.getAttribute("deviceList");
     String selectedDeviceCode = (item != null && item.getDeviceCode() != null) ? item.getDeviceCode().trim() : "";
+    String cancelUrl = ctx + "/admin/rooms";
+    if (!isNew && item != null) {
+        String rCode = (item.getCode() != null && !item.getCode().trim().isEmpty()) 
+            ? item.getCode().trim() 
+            : String.valueOf(item.getRoomId());
+        cancelUrl = ctx + "/admin/rooms/detail?id=" + Web.esc(rCode);
+    }
 
     AppUser me = (AppUser) session.getAttribute("user");
     String userName = (me != null && me.getFullName() != null) ? me.getFullName() : "Admin User";
@@ -539,12 +546,12 @@
         <!-- 4. FORM CONTENT AREA -->
         <div class="form-content-wrap">
             <div class="form-top-actions">
-                <a href="<%= ctx %>/admin/rooms" class="btn-back-link">
+                <a href="<%= cancelUrl %>" class="btn-back-link">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    <span>Back to Classrooms</span>
+                    <span><%= !isNew ? "Back to Room Detail" : "Back to Classrooms" %></span>
                 </a>
             </div>
 
@@ -680,7 +687,7 @@
 
                     <!-- Form Action Buttons -->
                     <div class="form-actions-bar">
-                        <a href="<%= ctx %>/admin/rooms" class="btn-cancel">Cancel</a>
+                        <a href="<%= cancelUrl %>" class="btn-cancel">Cancel</a>
                         <button type="submit" class="btn-submit">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>

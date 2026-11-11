@@ -320,10 +320,8 @@
             <div class="title-left-group">
                 <div class="title-icon-box">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                 </div>
                 <div class="title-text-group">
@@ -601,7 +599,7 @@
                                 <span class="summary-val" id="summaryMetricVal">688</span>
                                 <span class="summary-unit" id="summaryMetricUnit">ppm</span>
                             </div>
-                            <div class="summary-range-text" id="summaryRangeText">Allowed: ≤ 1000 ppm</div>
+                            <div class="summary-range-text" id="summaryRangeText">Allowed: &le; 1000 ppm</div>
 
                             <!-- Mini Sparkline SVG -->
                             <div class="sparkline-wrapper">
