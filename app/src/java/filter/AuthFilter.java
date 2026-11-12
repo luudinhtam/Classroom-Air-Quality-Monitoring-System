@@ -55,9 +55,11 @@ public class AuthFilter implements Filter {
         ALLOWED.put("/sessions/export", roles("ADMIN", "STATION_MANAGER", "OPERATOR", "REVIEWER", "VIEWER"));
         ALLOWED.put("/sessions", roles("ADMIN", "STATION_MANAGER", "OPERATOR", "REVIEWER", "VIEWER"));
         
-        // 5. LABEL & DASHBOARD
+        // 5. LABEL, DASHBOARD & STANDARDS
         ALLOWED.put("/label/correct", roles("ADMIN", "REVIEWER")); 
         ALLOWED.put("/dashboard", roles("ADMIN", "STATION_MANAGER", "OPERATOR", "REVIEWER", "VIEWER"));
+        ALLOWED.put("/standarts", roles("ADMIN", "STATION_MANAGER", "OPERATOR", "REVIEWER", "VIEWER"));
+        ALLOWED.put("/standards", roles("ADMIN", "STATION_MANAGER", "OPERATOR", "REVIEWER", "VIEWER"));
     }
 
     private static Set<String> roles(String... names) {

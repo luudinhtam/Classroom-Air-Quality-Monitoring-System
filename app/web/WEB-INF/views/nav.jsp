@@ -22,6 +22,7 @@
         <a href="<%= ctx %>/dashboard">Dashboard</a>
         <a href="<%= ctx %>/admin/rooms">Classrooms</a>
         <a href="<%= ctx %>/alerts">Alerts</a>
+        <a href="<%= ctx %>/standarts">Standards</a>
         
         <!-- Chỉ ADMIN mới được xem menu Quản lý Devices và Users -->
         <% if (isAdmin) { %>

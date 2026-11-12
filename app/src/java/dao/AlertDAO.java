@@ -11,7 +11,8 @@ public class AlertDAO {
     private static final String SELECT_BASE =
         "SELECT a.alert_id, a.session_id, a.alert_code, a.alert_type, a.message, " +
         "a.status, a.handled_by, COALESCE(u.full_name, u.username) AS handled_by_name, a.note, a.created_at, " +
-        "d.device_code, r.room_id, r.room_code " +
+        "d.device_code, r.room_id, r.room_code, " +
+        "s.temperature, s.humid, s.co, s.co2 " +
         "FROM Air_Alert a " +
         "LEFT JOIN AppUser u ON u.user_id = a.handled_by " +
         "LEFT JOIN Air_Session s ON s.session_id = a.session_id " +
@@ -293,6 +294,22 @@ public class AlertDAO {
             a.setRoomCode(rs.getString("room_code"));
             int rId = rs.getInt("room_id");
             if (!rs.wasNull()) a.setRoomId(rId);
+        } catch (SQLException ignored) {}
+        try {
+            double temp = rs.getDouble("temperature");
+            if (!rs.wasNull()) a.setTemperature(temp);
+        } catch (SQLException ignored) {}
+        try {
+            double hum = rs.getDouble("humid");
+            if (!rs.wasNull()) a.setHumid(hum);
+        } catch (SQLException ignored) {}
+        try {
+            int coVal = rs.getInt("co");
+            if (!rs.wasNull()) a.setCo(coVal);
+        } catch (SQLException ignored) {}
+        try {
+            int co2Val = rs.getInt("co2");
+            if (!rs.wasNull()) a.setCo2(co2Val);
         } catch (SQLException ignored) {}
         return a;
     }

@@ -72,4 +72,147 @@ public class AirAlert {
 
     public Integer getRoomId() { return roomId; }
     public void setRoomId(Integer roomId) { this.roomId = roomId; }
+
+    // Dữ liệu số đo thực tế từ Air_Session tại thời điểm phát sinh alert
+    private Double temperature;
+    private Double humid;
+    private Integer co;
+    private Integer co2;
+
+    public Double getTemperature() { return temperature; }
+    public void setTemperature(Double temperature) { this.temperature = temperature; }
+
+    public Double getHumid() { return humid; }
+    public void setHumid(Double humid) { this.humid = humid; }
+
+    public Integer getCo() { return co; }
+    public void setCo(Integer co) { this.co = co; }
+
+    public Integer getCo2() { return co2; }
+    public void setCo2(Integer co2) { this.co2 = co2; }
+
+    /**
+     * Lấy giá trị số đo của chỉ số tương ứng với alert này.
+     * Ưu tiên từ session trong DB (temperature, humid, co, co2).
+     * Nếu không có trong session, fallback trích xuất số từ message.
+     */
+    public Double getMetricValue() {
+        String type = getAlertType();
+        if (type == null) type = getRuleCode();
+        if (type == null) type = "";
+        String upper = type.toUpperCase();
+
+        if (upper.contains("TEMP")) {
+            if (temperature != null) return temperature;
+            return extractNumberFromMessage();
+        } else if (upper.contains("HUMID")) {
+            if (humid != null) return humid;
+            return extractNumberFromMessage();
+        } else if (upper.contains("CO2") || upper.contains("CARBON")) {
+            if (co2 != null) return co2.doubleValue();
+            return extractNumberFromMessage();
+        } else if (upper.equals("CO")) {
+            if (co != null) return co.doubleValue();
+            return extractNumberFromMessage();
+        }
+        return extractNumberFromMessage();
+    }
+
+    private Double extractNumberFromMessage() {
+        if (message == null || message.trim().isEmpty()) return null;
+        try {
+            java.util.regex.Pattern p = java.util.regex.Pattern.compile("(\\d+(?:\\.\\d+)?)");
+            java.util.regex.Matcher m = p.matcher(message);
+            if (m.find()) {
+                return Double.parseDouble(m.group(1));
+            }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    /**
+     * Đánh giá trạng thái chỉ số (Metric Status) theo đúng 100% định mức trang Standards.
+     */
+    public String getMetricStatus() {
+        String type = getAlertType();
+        if (type == null) type = getRuleCode();
+        if (type == null) type = "";
+        String upper = type.toUpperCase();
+
+        // Kiểm tra biến thiên đột ngột mùi dầu / cồn cho CO2
+        if (upper.contains("CO2") || upper.contains("CARBON")) {
+            String msgLower = message != null ? message.toLowerCase() : "";
+            String rule = ruleCode != null ? ruleCode.toUpperCase() : "";
+            if (msgLower.contains("oil") || msgLower.contains("dầu") || msgLower.contains("spike")
+                || msgLower.contains("cồn") || msgLower.contains("alcohol") || rule.contains("SPIKE")) {
+                return "Smell Spike (Oil)";
+            }
+        }
+
+        Double val = getMetricValue();
+        if (val == null) {
+            // Giá trị mặc định theo loại alert khi không xác định được số đo
+            if (upper.contains("TEMP")) return "Too Hot";
+            if (upper.contains("HUMID")) return "Too High";
+            if (upper.contains("CO2")) return "Stuffy Air";
+            if (upper.equals("CO")) return "Danger Level";
+            return "Warning";
+        }
+
+        if (upper.contains("TEMP")) {
+            if (val < 20.0) return "Cold";
+            if (val <= 28.0) return "Good";
+            if (val < 32.0) return "Warm";
+            return "Too Hot";
+        } else if (upper.contains("HUMID")) {
+            if (val < 40.0) return "Dry";
+            if (val <= 70.0) return "Good";
+            if (val < 80.0) return "High";
+            return "Too High";
+        } else if (upper.contains("CO2") || upper.contains("CARBON")) {
+            if (val < 700.0) return "Fresh Air";
+            if (val <= 1000.0) return "Good Air";
+            if (val <= 1500.0) return "Stuffy Air";
+            return "Very Stuffy";
+        } else if (upper.equals("CO")) {
+            if (val < 4.0) return "Safe Air";
+            if (val < 9.0) return "Small Smell";
+            if (val <= 25.0) return "Danger Level";
+            return "Leave Now";
+        }
+
+        return "Warning";
+    }
+
+    /**
+     * CSS class màu badge đồng bộ từ trang Standards
+     */
+    public String getMetricBadgeClass() {
+        String st = getMetricStatus();
+        switch (st) {
+            case "Cold":
+            case "Dry":
+                return "tag-low";
+            case "Good":
+            case "Fresh Air":
+            case "Good Air":
+            case "Safe Air":
+                return "tag-optimal";
+            case "Warm":
+            case "High":
+            case "Stuffy Air":
+            case "Small Smell":
+                return "tag-warning";
+            case "Too Hot":
+            case "Too High":
+            case "Very Stuffy":
+            case "Danger Level":
+            case "Leave Now":
+                return "tag-critical";
+            case "Smell Spike (Oil)":
+                return "tag-spike";
+            default:
+                return "tag-warning";
+        }
+    }
 }

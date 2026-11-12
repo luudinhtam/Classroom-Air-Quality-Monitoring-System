@@ -1369,3 +1369,75 @@ body.sidebar-collapsed .main-content {
     color: var(--text-secondary);
     line-height: 1.4;
 }
+
+/* =============================================================================
+   12. DATA HISTORY TABLE FOOTER & PAGINATION (MAX 10 RECORDS/PAGE)
+   ============================================================================= */
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-top: 1px solid var(--border-card);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.footer-count-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: #eff6ff;
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.page-btn.active {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.page-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.page-ellipsis {
+    padding: 0 4px;
+    color: var(--text-muted);
+    font-size: 13px;
+}

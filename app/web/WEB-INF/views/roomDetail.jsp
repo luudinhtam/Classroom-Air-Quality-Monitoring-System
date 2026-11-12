@@ -7,7 +7,7 @@
     List<AirAlert> recentAlerts = (List<AirAlert>) request.getAttribute("recentAlerts");
     Device activeDevice = (Device) request.getAttribute("activeDevice");
     String activeTab = (String) request.getAttribute("activeTab");
-    if (activeTab == null || activeTab.isEmpty()) activeTab = "charts";
+    if (activeTab == null || activeTab.isEmpty() || "alert-history".equals(activeTab)) activeTab = "charts";
     boolean isMeasureTab = "measure".equalsIgnoreCase(activeTab);
     
     AppUser me = (AppUser) session.getAttribute("user");
@@ -170,6 +170,15 @@
                 </svg>
                 <span>Alerts</span>
                 <span class="sidebar-badge" id="sidebarAlertBadge"><%= openAlertCount %></span>
+            </a>
+
+            <!-- Standards & Alert Preview -->
+            <a href="<%= ctx %>/standarts" class="menu-item" title="Safety Standards & Alert Preview">
+                <svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+                <span>Standards</span>
             </a>
 
             <!-- Devices -->
@@ -479,13 +488,6 @@
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                     <span>Data History</span>
-                </button>
-                <button class="main-tab-btn <%= "alert-history".equals(activeTab) ? "active" : "" %>" data-tab="alert-history">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
-                    <span>Alert History</span>
                 </button>
                 <button class="main-tab-btn <%= "room-info".equals(activeTab) ? "active" : "" %>" data-tab="room-info">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1078,20 +1080,25 @@
                 <h3 class="pane-title">Historical Telemetry Logs</h3>
                 <p class="pane-subtitle">Recent measurement packets recorded from sensor node <%= Web.esc(deviceCode) %></p>
                 <div class="table-responsive">
-                    <table class="alert-table">
+                    <table class="alert-table" id="dataHistoryTable">
                         <thead>
                             <tr>
                                 <th>Timestamp</th>
                                 <th>Temperature</th>
                                 <th>Humidity</th>
-                                <th>CO₂ Level</th>
+                                <th>CO&#8322; Level</th>
                                 <th>CO Level</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <% if (recentSessions != null && !recentSessions.isEmpty()) { %>
+                        <tbody id="dataHistoryTbody">
+                            <% 
+                            int maxInitialRows = 10;
+                            int renderedRows = 0;
+                            if (recentSessions != null && !recentSessions.isEmpty()) { %>
                                 <% for (AirSession s : recentSessions) { 
+                                    if (renderedRows >= maxInitialRows) break;
+                                    renderedRows++;
                                     Double sTemp = (s.getTemperature() != null) ? Math.round(s.getTemperature() * 10.0) / 10.0 : (s.getTempC() > 0 ? Math.round(s.getTempC() * 10.0) / 10.0 : null);
                                     Double sHumid = (s.getHumid() != null) ? Math.round(s.getHumid() * 10.0) / 10.0 : (s.getHumidPct() > 0 ? Math.round(s.getHumidPct() * 10.0) / 10.0 : null);
                                     Integer sCo2 = (s.getCo2() != null) ? s.getCo2() : s.getGasARaw();
@@ -1122,104 +1129,16 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
 
-        <!-- Tab 3: ALERT HISTORY (Standalone) -->
-        <div id="tab-alert-history" class="tab-pane">
-            <div class="simple-card-pane">
-                <h3 class="pane-title">Complete Alert History for <%= Web.esc(roomName) %></h3>
-                <p class="pane-subtitle">Review all historical events, warnings, and resolved incident logs.</p>
-                <div class="table-responsive" id="tabAlertTableContainer">
-                    <% if (recentAlerts != null && !recentAlerts.isEmpty()) { %>
-                        <table class="alert-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 150px;">Alert Code</th>
-                                    <th>Message</th>
-                                    <th style="width: 130px;">Status</th>
-                                    <th style="width: 170px;">Handled By</th>
-                                    <th style="width: 200px;">Note</th>
-                                    <th style="width: 170px;">Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for (AirAlert al : recentAlerts) { 
-                                    String code = (al.getAlertCode() != null && !al.getAlertCode().isEmpty()) ? al.getAlertCode() : "–";
-                                    String msg = (al.getMessage() != null && !al.getMessage().isEmpty()) ? al.getMessage() : "–";
-                                    String rawStatus = (al.getStatus() != null) ? al.getStatus().toUpperCase() : "OPENING";
-                                    String statusBadgeClass;
-                                    String statusText;
-                                    if ("APPROVED".equals(rawStatus)) {
-                                        statusBadgeClass = "table-status-pill status-resolved";
-                                        statusText = "APPROVED";
-                                    } else if ("REJECTED".equals(rawStatus)) {
-                                        statusBadgeClass = "table-status-pill status-rejected";
-                                        statusText = "REJECTED";
-                                    } else {
-                                        statusBadgeClass = "table-status-pill status-progress";
-                                        statusText = "OPENING";
-                                    }
-                                    String handledByName = (al.getHandledByName() != null && !al.getHandledByName().trim().isEmpty()) 
-                                            ? al.getHandledByName() 
-                                            : (al.getHandledBy() != null ? ("User #" + al.getHandledBy()) : "–");
-                                    String note = (al.getNote() != null && !al.getNote().trim().isEmpty()) ? al.getNote() : "–";
-                                    String alTime = (al.getCreatedAt() != null) ? al.getCreatedAt().toString() : "–";
-                                %>
-                                <tr>
-                                    <td>
-                                        <span class="alert-code-pill"><%= Web.esc(code) %></span>
-                                    </td>
-                                    <td>
-                                        <div class="alert-message-text"><%= Web.esc(msg) %></div>
-                                    </td>
-                                    <td>
-                                        <span class="<%= statusBadgeClass %>">
-                                            <span class="status-dot"></span> <%= statusText %>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="cell-user-wrapper">
-                                            <% if (!"–".equals(handledByName)) { %>
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                                    <circle cx="12" cy="7" r="4"/>
-                                                </svg>
-                                            <% } %>
-                                            <span class="user-name-text"><%= Web.esc(handledByName) %></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="alert-note-text"><%= Web.esc(note) %></span>
-                                    </td>
-                                    <td>
-                                        <div class="cell-time-wrapper">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <polyline points="12 6 12 12 16 14"/>
-                                            </svg>
-                                            <span><%= Web.esc(alTime) %></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    <% } else { %>
-                        <div style="text-align: center; padding: 48px 16px; color: #94a3b8; font-weight: 500;">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            No alerts recorded for this classroom.
-                        </div>
-                    <% } %>
+                <!-- Table Footer & Pagination (Max 10 records per page) -->
+                <div class="table-footer" id="dataHistoryFooter">
+                    <span class="footer-count-text" id="dataHistoryCountText">Showing <%= recentSessions != null ? Math.min(recentSessions.size(), 10) : 0 %> of <%= recentSessions != null ? recentSessions.size() : 0 %> records</span>
+                    <div class="pagination-controls" id="dataHistoryPagination"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab 4: ROOM INFO (Extended Details) -->
+        <!-- Tab 3: ROOM INFO (Extended Details) -->
         <div id="tab-room-info" class="tab-pane">
             <div class="simple-card-pane">
                 <h3 class="pane-title">Room Specifications & Hardware Setup</h3>
@@ -1276,6 +1195,7 @@
                     int sco2 = (s.getCo2() != null) ? s.getCo2() : s.getGasARaw();
                     double sco = (s.getCo() != null) ? s.getCo().doubleValue() : (s.getGasBRaw() > 0 ? (double) s.getGasBRaw() : 0.0);
                     long epochMs = (s.getMeasuredAt() != null) ? s.getMeasuredAt().getTime() : 0L;
+                    boolean sIsNormal = (st <= tempMax) && (sh <= humidMax) && (sco2 <= co2Max) && (sco <= coMax);
             %>
             {
                 time: "<%= sTime %>",
@@ -1283,7 +1203,8 @@
                 temp: <%= String.format(Locale.US, "%.1f", st) %>,
                 humid: <%= String.format(Locale.US, "%.1f", sh) %>,
                 co2: <%= sco2 %>,
-                co: <%= String.format(Locale.US, "%.1f", sco) %>
+                co: <%= String.format(Locale.US, "%.1f", sco) %>,
+                isNormal: <%= sIsNormal %>
             }<%= (sIdx < recentSessions.size() - 1) ? "," : "" %>
             <%  }
                } %>

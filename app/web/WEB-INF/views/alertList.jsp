@@ -374,6 +374,43 @@
             border-color: #fecdd3;
         }
 
+        .level-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+        .level-tag.tag-low {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+        .level-tag.tag-optimal {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+        .level-tag.tag-warning {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .level-tag.tag-critical {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .level-tag.tag-spike {
+            background: #ede9fe;
+            color: #7c3aed;
+            border: 1px solid #ddd6fe;
+        }
+
         .room-code-tag {
             display: inline-flex;
             align-items: center;
@@ -1057,6 +1094,15 @@
                 <span class="sidebar-badge" id="sidebarAlertBadge"><%= openCount %></span>
             </a>
 
+            <!-- Standards & Alert Preview -->
+            <a href="<%= ctx %>/standarts" class="menu-item" title="Safety Standards & Alert Preview">
+                <svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+                <span>Standards</span>
+            </a>
+
             <!-- Devices -->
             <% if (isAdmin) { %>
             <a href="<%= ctx %>/admin/devices" class="menu-item" title="Devices">
@@ -1355,12 +1401,12 @@
                     <thead>
                         <tr>
                             <th style="width: 60px; text-align: center;">STT</th>
-                            <th style="width: 120px;">Alert Code</th>
+                            <th style="width: 125px;">Alert Code</th>
                             <th style="width: 130px;">Type</th>
-                            <th style="width: 120px;">Room Code</th>
-                            <th>Message</th>
-                            <th style="width: 120px;">Status</th>
-                            <th style="width: 165px;">Thời gian</th>
+                            <th style="width: 150px;">Metric Status</th>
+                            <th style="width: 130px;">Room Code</th>
+                            <th style="width: 140px;">Action Status</th>
+                            <th style="width: 170px;">Thời gian</th>
                             <th style="width: 110px; text-align: center;">Detail</th>
                         </tr>
                     </thead>
@@ -1377,6 +1423,8 @@
                                 else if (typeUpper.contains("HUMID")) typeBadgeClass = "type-humid";
                                 else if (typeUpper.contains("CO2")) typeBadgeClass = "type-co2";
                                 else if (typeUpper.equals("CO")) typeBadgeClass = "type-co";
+                                String metricStatus = a.getMetricStatus();
+                                String metricBadgeClass = a.getMetricBadgeClass();
                                 String roomCode = a.getRoomCode();
                                 Integer roomId = a.getRoomId();
                                 String msg = a.getMessage() != null ? a.getMessage() : "–";
@@ -1410,6 +1458,11 @@
                                 </span>
                             </td>
                             <td>
+                                <span class="level-tag <%= metricBadgeClass %>">
+                                    <%= Web.esc(metricStatus) %>
+                                </span>
+                            </td>
+                            <td>
                                 <% if (roomCode != null && !roomCode.trim().isEmpty()) { %>
                                     <a href="<%= ctx %>/admin/rooms/detail?id=<%= roomId != null ? roomId : "" %>" class="room-code-tag" title="View Room Detail">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -1418,9 +1471,6 @@
                                 <% } else { %>
                                     <span style="color: #94a3b8;">–</span>
                                 <% } %>
-                            </td>
-                            <td>
-                                <span class="alert-message-text"><%= Web.esc(msg) %></span>
                             </td>
                             <td>
                                 <span class="alert-status-pill <%= statusPillClass %>">
@@ -1443,6 +1493,8 @@
                                         data-alert-id="<%= a.getAlertId() %>"
                                         data-alert-code="<%= Web.esc(code) %>"
                                         data-type="<%= Web.esc(alertType) %>"
+                                        data-metric-status="<%= Web.esc(metricStatus) %>"
+                                        data-metric-badge="<%= Web.esc(metricBadgeClass) %>"
                                         data-room-code="<%= Web.esc(roomCode != null ? roomCode : "–") %>"
                                         data-message="<%= Web.esc(msg) %>"
                                         data-status="<%= statusLabel %>"
@@ -1559,11 +1611,15 @@
                             <div><span id="modalTypeBadge" class="alert-type-badge">–</span></div>
                         </div>
                         <div class="detail-item">
+                            <span class="detail-item-label">Metric Status:</span>
+                            <div><span id="modalMetricStatusBadge" class="level-tag tag-warning">–</span></div>
+                        </div>
+                        <div class="detail-item">
                             <span class="detail-item-label">Room Code:</span>
                             <div><span id="modalRoomCodeBadge" class="room-code-tag">–</span></div>
                         </div>
-                        <div class="detail-item span-2">
-                            <span class="detail-item-label">Trạng thái hiện tại:</span>
+                        <div class="detail-item">
+                            <span class="detail-item-label">Action Status:</span>
                             <div><span id="modalStatusBadge" class="alert-status-pill open">–</span></div>
                         </div>
                         <div class="detail-item span-2">
@@ -1739,6 +1795,11 @@
                 else if (tu.includes('CO2')) tClass = 'type-co2';
                 else if (tu === 'CO') tClass = 'type-co';
                 modalTypeBadge.className = 'alert-type-badge ' + tClass;
+            }
+            const modalMetricStatusBadge = document.getElementById('modalMetricStatusBadge');
+            if (modalMetricStatusBadge) {
+                modalMetricStatusBadge.textContent = ds.metricStatus || '–';
+                modalMetricStatusBadge.className = 'level-tag ' + (ds.metricBadge || 'tag-warning');
             }
             modalRoomCodeBadge.textContent = ds.roomCode;
 

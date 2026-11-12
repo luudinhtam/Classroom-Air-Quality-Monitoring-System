@@ -500,8 +500,9 @@ function getAlertIconSvg(category) {
 
 function renderAlertHistoryTable() {
     const tabContainer = document.getElementById("tabAlertTableContainer");
-    // If Tab 3 is already rendered by JSP, keep the server-side rendered table intact
-    if (tabContainer && tabContainer.children.length > 0) {
+    if (!tabContainer) return;
+    // If Tab is already rendered by JSP, keep the server-side rendered table intact
+    if (tabContainer.children.length > 0) {
         return;
     }
 
@@ -612,6 +613,98 @@ function setupActionButtons() {
     }
 }
 
+// 9. DATA HISTORY PAGINATION (MAX 10 SESSIONS PER PAGE)
+let dataHistoryPage = 1;
+const dataHistoryPageSize = 10;
+const sessionsData = Array.isArray(window.SERVER_SESSIONS_DATA) ? window.SERVER_SESSIONS_DATA : [];
+
+function renderDataHistoryTable() {
+    const tbody = document.getElementById("dataHistoryTbody");
+    const countEl = document.getElementById("dataHistoryCountText");
+    const paginationEl = document.getElementById("dataHistoryPagination");
+    if (!tbody) return;
+
+    const total = sessionsData.length;
+    if (total === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 36px 16px; color: #94a3b8; font-weight: 500;">
+                    No telemetry records found for this room.
+                </td>
+            </tr>
+        `;
+        if (countEl) countEl.innerText = "Showing 0 of 0 records";
+        if (paginationEl) paginationEl.innerHTML = "";
+        return;
+    }
+
+    const totalPages = Math.ceil(total / dataHistoryPageSize);
+    if (dataHistoryPage > totalPages) dataHistoryPage = totalPages;
+    if (dataHistoryPage < 1) dataHistoryPage = 1;
+
+    const startIdx = (dataHistoryPage - 1) * dataHistoryPageSize;
+    const endIdx = Math.min(startIdx + dataHistoryPageSize, total);
+    const pageItems = sessionsData.slice(startIdx, endIdx);
+
+    tbody.innerHTML = pageItems.map(s => {
+        const timeStr = s.time || "–";
+        const tempStr = (s.temp !== undefined && s.temp !== null) ? `${s.temp}&deg;C` : "–";
+        const humidStr = (s.humid !== undefined && s.humid !== null) ? `${Math.round(s.humid)}%` : "–";
+        const co2Str = (s.co2 !== undefined && s.co2 !== null) ? `${s.co2} ppm` : "–";
+        const coStr = (s.co !== undefined && s.co !== null) ? `${(s.co % 1 === 0 ? Math.round(s.co) : s.co)} ppm` : "–";
+        const isNormal = Boolean(s.isNormal);
+        return `
+            <tr>
+                <td>${timeStr}</td>
+                <td>${tempStr}</td>
+                <td>${humidStr}</td>
+                <td>${co2Str}</td>
+                <td>${coStr}</td>
+                <td>
+                    <span class="status-pill ${isNormal ? 'status-normal' : 'status-warning'}">
+                        <span class="status-dot"></span> ${isNormal ? 'Normal' : 'Warning'}
+                    </span>
+                </td>
+            </tr>
+        `;
+    }).join("");
+
+    if (countEl) {
+        countEl.innerText = `Showing ${startIdx + 1}–${endIdx} of ${total} records`;
+    }
+
+    if (paginationEl) {
+        if (totalPages <= 1) {
+            paginationEl.innerHTML = "";
+            return;
+        }
+
+        let html = "";
+        html += `<button class="page-btn" ${dataHistoryPage === 1 ? 'disabled' : ''} data-target-page="${dataHistoryPage - 1}" title="Previous Page">&lsaquo;</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            if (p === 1 || p === totalPages || (p >= dataHistoryPage - 1 && p <= dataHistoryPage + 1)) {
+                html += `<button class="page-btn ${p === dataHistoryPage ? 'active' : ''}" data-target-page="${p}">${p}</button>`;
+            } else if (p === dataHistoryPage - 2 || p === dataHistoryPage + 2) {
+                html += `<span class="page-ellipsis">&hellip;</span>`;
+            }
+        }
+
+        html += `<button class="page-btn" ${dataHistoryPage === totalPages ? 'disabled' : ''} data-target-page="${dataHistoryPage + 1}" title="Next Page">&rsaquo;</button>`;
+        paginationEl.innerHTML = html;
+
+        paginationEl.querySelectorAll("button[data-target-page]").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const targetPage = parseInt(e.currentTarget.getAttribute("data-target-page"), 10);
+                if (targetPage && targetPage !== dataHistoryPage) {
+                    dataHistoryPage = targetPage;
+                    renderDataHistoryTable();
+                }
+            });
+        });
+    }
+}
+
 // 10. SETUP HEADER CONTROLS (Sidebar Toggle & User Dropdown)
 function setupHeaderControls() {
     // Hamburger Sidebar Toggle
@@ -647,6 +740,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupActionButtons();
     setupHeaderControls();
     renderAlertHistoryTable();
+    renderDataHistoryTable();
     renderAllSvgCharts();
 
     window.addEventListener("resize", () => {
