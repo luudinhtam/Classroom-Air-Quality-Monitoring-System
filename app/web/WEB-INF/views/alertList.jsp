@@ -1260,7 +1260,7 @@
         <!-- 4. FOUR STATS CARDS (Always on 1 row) -->
         <section class="stats-cards-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr)) !important;">
             <!-- 1. Total Alerts -->
-            <div class="stat-card <%= (currentStatus == null || currentStatus.isEmpty()) ? "active active-blue" : "" %>" onclick="filterByStatus('')" title="Lọc tất cả cảnh báo">
+            <div class="stat-card <%= (currentStatus == null || currentStatus.isEmpty()) ? "active active-blue" : "" %>" onclick="filterByStatus('')" title="Filter all alerts">
                 <div class="stat-icon-wrapper blue">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -1276,7 +1276,7 @@
             </div>
 
             <!-- 2. Open Pending Alerts -->
-            <div class="stat-card <%= "OPENING".equals(currentStatus) ? "active active-amber" : "" %>" onclick="filterByStatus('OPENING')" title="Lọc cảnh báo đang mở (Pending)">
+            <div class="stat-card <%= "OPENING".equals(currentStatus) ? "active active-amber" : "" %>" onclick="filterByStatus('OPENING')" title="Filter open pending alerts">
                 <div class="stat-icon-wrapper amber">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -1294,7 +1294,7 @@
             </div>
 
             <!-- 3. Approved Alerts -->
-            <div class="stat-card <%= "APPROVED".equals(currentStatus) ? "active active-green" : "" %>" onclick="filterByStatus('APPROVED')" title="Lọc cảnh báo đã Approved">
+            <div class="stat-card <%= "APPROVED".equals(currentStatus) ? "active active-green" : "" %>" onclick="filterByStatus('APPROVED')" title="Filter approved alerts">
                 <div class="stat-icon-wrapper green">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -1311,7 +1311,7 @@
             </div>
 
             <!-- 4. Rejected Alerts -->
-            <div class="stat-card <%= "REJECTED".equals(currentStatus) ? "active active-red" : "" %>" onclick="filterByStatus('REJECTED')" title="Lọc cảnh báo đã Rejected">
+            <div class="stat-card <%= "REJECTED".equals(currentStatus) ? "active active-red" : "" %>" onclick="filterByStatus('REJECTED')" title="Filter rejected alerts">
                 <div class="stat-icon-wrapper red">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -1364,12 +1364,12 @@
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="text" id="tableQuickSearch" class="search-field" placeholder="Lọc nhanh mã, phòng, nội dung, thời gian..." autocomplete="off">
-                    <button type="button" id="clearQuickSearch" class="btn-clear-quick-search" title="Xóa tìm kiếm" style="display:none;">&times;</button>
+                    <input type="text" id="tableQuickSearch" class="search-field" placeholder="Quick search code, room, status, time..." autocomplete="off">
+                    <button type="button" id="clearQuickSearch" class="btn-clear-quick-search" title="Clear search" style="display:none;">&times;</button>
                 </div>
 
                 <!-- Classroom Filter (Auto-submits immediately on change) -->
-                <select class="filter-select" name="roomId" id="selectRoomFilter" onchange="this.form.submit()" title="Chọn phòng để lọc ngay lập tức">
+                <select class="filter-select" name="roomId" id="selectRoomFilter" onchange="this.form.submit()" title="Filter by classroom">
                     <option value="">-- All Classrooms --</option>
                     <% if (roomList != null) {
                         for (model.Room r : roomList) { %>
@@ -1381,12 +1381,12 @@
                 </select>
 
                 <!-- Alert Code Filter (Auto-submits immediately on change) -->
-                <select class="filter-select" name="ruleCode" id="selectRuleFilter" onchange="this.form.submit()" title="Chọn mã cảnh báo để lọc ngay lập tức">
+                <select class="filter-select" name="ruleCode" id="selectRuleFilter" onchange="this.form.submit()" title="Filter by alert type">
                     <option value="">-- All Types --</option>
-                    <option value="TEMPERATURE" <%= "TEMPERATURE".equals(currentRuleCode) ? "selected" : "" %>>TEMPERATURE (Nhiệt độ)</option>
-                    <option value="HUMID" <%= "HUMID".equals(currentRuleCode) ? "selected" : "" %>>HUMID (Độ ẩm)</option>
-                    <option value="CO2" <%= "CO2".equals(currentRuleCode) ? "selected" : "" %>>CO2 (Khí CO₂)</option>
-                    <option value="CO" <%= "CO".equals(currentRuleCode) ? "selected" : "" %>>CO (Khí CO)</option>
+                    <option value="TEMPERATURE" <%= "TEMPERATURE".equals(currentRuleCode) ? "selected" : "" %>>TEMPERATURE (Temperature)</option>
+                    <option value="HUMID" <%= "HUMID".equals(currentRuleCode) ? "selected" : "" %>>HUMID (Humidity)</option>
+                    <option value="CO2" <%= "CO2".equals(currentRuleCode) ? "selected" : "" %>>CO2 (Carbon Dioxide)</option>
+                    <option value="CO" <%= "CO".equals(currentRuleCode) ? "selected" : "" %>>CO (Carbon Monoxide)</option>
                 </select>
 
                 <button type="submit" class="btn-filter">Filter</button>
@@ -1400,13 +1400,13 @@
                 <table class="alerts-table">
                     <thead>
                         <tr>
-                            <th style="width: 60px; text-align: center;">STT</th>
+                            <th style="width: 60px; text-align: center;">No.</th>
                             <th style="width: 125px;">Alert Code</th>
                             <th style="width: 130px;">Type</th>
                             <th style="width: 150px;">Metric Status</th>
                             <th style="width: 130px;">Room Code</th>
                             <th style="width: 140px;">Action Status</th>
-                            <th style="width: 170px;">Thời gian</th>
+                            <th style="width: 170px;">Time</th>
                             <th style="width: 110px; text-align: center;">Detail</th>
                         </tr>
                     </thead>
@@ -1581,7 +1581,7 @@
                     </div>
                     <div>
                         <span class="modal-title">Alert Details <span id="modalAlertIdTitle" style="color: #2563eb;">#</span></span>
-                        <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Xem thông tin đầy đủ và cập nhật xử lý cảnh báo</div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">View complete incident record and update resolution status</div>
                     </div>
                 </div>
                 <button type="button" class="modal-close-btn" onclick="closeDetailModal()" title="Close dialog">
@@ -1596,10 +1596,10 @@
                 <input type="hidden" name="backRoomId" value="<%= currentRoomId != null ? currentRoomId : "" %>">
 
                 <div class="modal-body detail-modal-body">
-                    <!-- Thông tin chi tiết cảnh báo -->
+                    <!-- Incident Details -->
                     <div class="detail-grid">
                         <div class="detail-item">
-                            <span class="detail-item-label">Số thứ tự:</span>
+                            <span class="detail-item-label">No.:</span>
                             <span class="detail-item-val font-semibold" id="modalStt">–</span>
                         </div>
                         <div class="detail-item">
@@ -1623,29 +1623,29 @@
                             <div><span id="modalStatusBadge" class="alert-status-pill open">–</span></div>
                         </div>
                         <div class="detail-item span-2">
-                            <span class="detail-item-label">Thời gian:</span>
+                            <span class="detail-item-label">Time:</span>
                             <div class="cell-time-wrapper">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                 <span id="modalTime" style="font-size: 13px; color: #1e293b; font-weight: 500;">–</span>
                             </div>
                         </div>
                         <div class="detail-item span-2">
-                            <span class="detail-item-label">Nội dung cảnh báo (Message):</span>
+                            <span class="detail-item-label">Alert Message:</span>
                             <div class="modal-message-box" id="modalMessage">–</div>
                         </div>
                         <div class="detail-item span-2">
-                            <span class="detail-item-label">Xử lý bởi (Handled By):</span>
+                            <span class="detail-item-label">Handled By:</span>
                             <div class="modal-handler-box">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 <span class="handler-name"><%= Web.esc(userName) %></span>
-                                <span class="handler-user-badge">Người dùng hiện tại</span>
+                                <span class="handler-user-badge">Current User</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Chọn Approve hoặc Reject -->
+                    <!-- Select Approve or Reject -->
                     <% if (canHandle) { %>
-                    <div class="modal-section-title">Chọn trạng thái xử lý:</div>
+                    <div class="modal-section-title">Select Action Status:</div>
                     <div class="status-choice-group">
                         <label class="status-choice-card approve-card" id="approveCard" onclick="selectChoice('APPROVED')">
                             <input type="radio" name="status" value="APPROVED" id="modalOptApprove">
@@ -1655,7 +1655,7 @@
                                 </div>
                                 <div class="choice-text">
                                     <div class="choice-label">Approve</div>
-                                    <div class="choice-hint">Xác nhận sự cố & duyệt cảnh báo</div>
+                                    <div class="choice-hint">Confirm real issue & approve alert</div>
                                 </div>
                             </div>
                         </label>
@@ -1667,29 +1667,29 @@
                                 </div>
                                 <div class="choice-text">
                                     <div class="choice-label">Reject</div>
-                                    <div class="choice-hint">Từ chối cảnh báo giả / nhiễu cảm biến</div>
+                                    <div class="choice-hint">Reject false alarm / sensor noise</div>
                                 </div>
                             </div>
                         </label>
                     </div>
                     <% } %>
 
-                    <!-- Ô để ghi chú (Note) -->
+                    <!-- Resolution Note -->
                     <div class="modal-note-section">
                         <label for="modalNoteText" class="detail-item-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span>Ghi chú xử lý (Note):</span>
+                            <span>Resolution Note:</span>
                             <% if (canHandle) { %>
-                                <span style="font-weight: normal; color: #94a3b8; font-size: 11.5px;">Tùy chọn</span>
+                                <span style="font-weight: normal; color: #94a3b8; font-size: 11.5px;">Optional</span>
                             <% } %>
                         </label>
                         <% if (canHandle) { %>
                             <div class="quick-reason-pills" style="margin-bottom: 6px;">
-                                <button type="button" class="reason-chip" onclick="setDetailNote('Đã kiểm tra phòng học và xử lý thông gió.')">Đã thông gió</button>
-                                <button type="button" class="reason-chip" onclick="setDetailNote('Cảnh báo giả / Nhiễu môi trường.')">Cảnh báo giả</button>
-                                <button type="button" class="reason-chip" onclick="setDetailNote('Nước rửa tay / cồn bay hơi tạm thời.')">Cồn sát khuẩn</button>
-                                <button type="button" class="reason-chip" onclick="setDetailNote('Nhiệt độ đã ổn định trở lại.')">Nhiệt độ ổn định</button>
+                                <button type="button" class="reason-chip" onclick="setDetailNote('Classroom inspected and ventilated.')">Ventilated</button>
+                                <button type="button" class="reason-chip" onclick="setDetailNote('False alarm / sensor noise.')">False Alarm</button>
+                                <button type="button" class="reason-chip" onclick="setDetailNote('Temporary hand sanitizer / alcohol vapor.')">Alcohol / Oil Spike</button>
+                                <button type="button" class="reason-chip" onclick="setDetailNote('Temperature stabilized back to normal.')">Temp Stabilized</button>
                             </div>
-                            <textarea id="modalNoteText" name="handledNote" class="modal-textarea" placeholder="Nhập lý do hoặc hướng xử lý cảnh báo..." rows="3"></textarea>
+                            <textarea id="modalNoteText" name="handledNote" class="modal-textarea" placeholder="Enter notes or reason for this resolution..." rows="3"></textarea>
                         <% } else { %>
                             <textarea id="modalNoteText" name="handledNote" class="modal-textarea" rows="3" readonly style="background-color: #f8fafc; cursor: default; resize: none;"></textarea>
                         <% } %>
@@ -1697,7 +1697,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" onclick="closeDetailModal()">Đóng</button>
+                    <button type="button" class="btn-modal-cancel" onclick="closeDetailModal()">Close</button>
                     <% if (canHandle) { %>
                         <button type="submit" class="btn-modal-save">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1952,8 +1952,8 @@
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
-                            <span style="font-weight: 600; color: #334155; font-size: 14px;">Không tìm thấy cảnh báo phù hợp với bộ lọc</span>
-                            <span style="font-size: 12.5px; color: #94a3b8;">Nhấn thẻ Total Alerts hoặc nút '✕' để hiển thị lại tất cả</span>
+                            <span style="font-weight: 600; color: #334155; font-size: 14px;">No alerts match the filter criteria</span>
+                            <span style="font-size: 12.5px; color: #94a3b8;">Click 'Total Alerts' card or '✕' to show all</span>
                         </div>
                     </td>
                 `;
@@ -1997,8 +1997,8 @@
                 if (query.length > 0 || currentActiveStatus) {
                     defaultCountEl.style.display = 'none';
                     searchCountEl.style.display = 'inline';
-                    let statusLabel = currentActiveStatus ? (' • Trạng thái: ' + currentActiveStatus) : '';
-                    searchCountEl.textContent = 'Lọc tức thì: Hiển thị ' + matched + '/' + totalRows + ' cảnh báo' + statusLabel;
+                    let statusLabel = currentActiveStatus ? (' • Status: ' + currentActiveStatus) : '';
+                    searchCountEl.textContent = 'Instant filter: Showing ' + matched + '/' + totalRows + ' alerts' + statusLabel;
                 } else {
                     defaultCountEl.style.display = 'inline';
                     searchCountEl.style.display = 'none';
