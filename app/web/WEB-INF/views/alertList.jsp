@@ -77,66 +77,58 @@
 
     <!-- Embedded Scoped Alert Styles (100% immune to browser cache delays) -->
     <style>
-        /* 1. Quick Status Filter Tabs */
+        /* 1. Quick Status Filter Tabs (Styled like Standards Tab Bar) */
         .status-tabs {
             display: flex;
+            align-items: center;
             gap: 8px;
-            border-bottom: 2px solid #e3eaf5;
-            padding-bottom: 0;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            margin-bottom: 2px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 6px 10px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+            margin-bottom: 16px;
             width: 100%;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .status-tabs::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
+            box-sizing: border-box;
         }
 
         .status-tab-btn {
-            padding: 9px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-            text-decoration: none;
-            border-radius: 8px 8px 0 0;
-            border-bottom: 2px solid transparent;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.15s ease;
-            margin-bottom: -2px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #64748b;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
             flex-shrink: 0;
         }
 
         .status-tab-btn:hover {
             color: #2563eb;
-            background: #ffffff;
+            background: #eff6ff;
         }
 
         .status-tab-btn.active {
-            color: #2563eb;
-            border-bottom: 2px solid #2563eb;
-            background: #ffffff;
+            background: #2563eb !important;
+            color: #ffffff !important;
+            box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
         }
 
         .status-tab-btn .tab-count {
             font-size: 11px;
             padding: 2px 7px;
-            border-radius: 12px;
+            border-radius: 9999px;
             background: #e2e8f0;
             color: #475569;
             font-weight: 700;
-        }
-
-        .status-tab-btn.active .tab-count {
-            background: #dbeafe;
-            color: #2563eb;
+            transition: all 0.2s ease;
         }
 
         .status-tab-btn.tab-open .tab-count {
@@ -154,6 +146,14 @@
             color: #991b1b;
         }
 
+        .status-tab-btn.active .tab-count,
+        .status-tab-btn.active.tab-open .tab-count,
+        .status-tab-btn.active.tab-acked .tab-count,
+        .status-tab-btn.active.tab-rejected .tab-count {
+            background: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+        }
+
         /* 2. Stats Cards: Always 1 row (4 columns) & Hover Effects */
         .stats-cards-grid {
             display: grid !important;
@@ -167,10 +167,7 @@
             min-width: 0 !important;
             padding: 16px 18px !important;
             gap: 12px !important;
-            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-                        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-                        border-color 0.22s ease !important;
-            cursor: pointer;
+            cursor: default !important;
             position: relative;
         }
 
@@ -184,41 +181,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px) !important;
-            box-shadow: 0 10px 20px -3px rgba(15, 27, 61, 0.08), 0 4px 6px -2px rgba(15, 27, 61, 0.04) !important;
-            border-color: #cbd5e1 !important;
-        }
-
-        .stat-card:hover .stat-icon-wrapper {
-            transform: scale(1.08);
-        }
-
-        /* Active stats cards matching active status */
-        .stat-card.active {
-            transform: translateY(-2px);
-        }
-        .stat-card.active-blue {
-            border: 2px solid #2563eb !important;
-            background: #f8fbff !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
-        }
-        .stat-card.active-amber {
-            border: 2px solid #d97706 !important;
-            background: #fffdf5 !important;
-            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12) !important;
-        }
-        .stat-card.active-green {
-            border: 2px solid #16a34a !important;
-            background: #f6fef9 !important;
-            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12) !important;
-        }
-        .stat-card.active-red {
-            border: 2px solid #ef4444 !important;
-            background: #fef8f8 !important;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
         }
 
         .stat-icon-wrapper {
@@ -1257,10 +1219,10 @@
             </div>
         </section>
 
-        <!-- 4. FOUR STATS CARDS (Always on 1 row) -->
+        <!-- 4. FOUR STATS CARDS (Display Overview) -->
         <section class="stats-cards-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr)) !important;">
             <!-- 1. Total Alerts -->
-            <div class="stat-card <%= (currentStatus == null || currentStatus.isEmpty()) ? "active active-blue" : "" %>" onclick="filterByStatus('')" title="Filter all alerts">
+            <div class="stat-card">
                 <div class="stat-icon-wrapper blue">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -1276,7 +1238,7 @@
             </div>
 
             <!-- 2. Open Pending Alerts -->
-            <div class="stat-card <%= "OPENING".equals(currentStatus) ? "active active-amber" : "" %>" onclick="filterByStatus('OPENING')" title="Filter open pending alerts">
+            <div class="stat-card">
                 <div class="stat-icon-wrapper amber">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -1294,7 +1256,7 @@
             </div>
 
             <!-- 3. Approved Alerts -->
-            <div class="stat-card <%= "APPROVED".equals(currentStatus) ? "active active-green" : "" %>" onclick="filterByStatus('APPROVED')" title="Filter approved alerts">
+            <div class="stat-card">
                 <div class="stat-icon-wrapper green">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -1311,7 +1273,7 @@
             </div>
 
             <!-- 4. Rejected Alerts -->
-            <div class="stat-card <%= "REJECTED".equals(currentStatus) ? "active active-red" : "" %>" onclick="filterByStatus('REJECTED')" title="Filter rejected alerts">
+            <div class="stat-card">
                 <div class="stat-icon-wrapper red">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -1336,19 +1298,19 @@
             if (currentRuleCode != null && !currentRuleCode.isEmpty()) filterPreservedParams += "&ruleCode=" + Web.esc(currentRuleCode);
         %>
         <div class="status-tabs">
-            <a href="<%= ctx %>/alerts<%= filterPreservedParams.startsWith("&") ? "?" + filterPreservedParams.substring(1) : filterPreservedParams %>" onclick="filterByStatus(''); return false;" class="status-tab-btn <%= (currentStatus == null || currentStatus.isEmpty()) ? "active" : "" %>">
+            <a href="<%= ctx %>/alerts<%= filterPreservedParams.startsWith("&") ? "?" + filterPreservedParams.substring(1) : filterPreservedParams %>" class="status-tab-btn <%= (currentStatus == null || currentStatus.isEmpty()) ? "active" : "" %>">
                 <span>All Alerts</span>
                 <span class="tab-count"><%= allCount %></span>
             </a>
-            <a href="<%= ctx %>/alerts?status=OPENING<%= filterPreservedParams %>" onclick="filterByStatus('OPENING'); return false;" class="status-tab-btn tab-open <%= "OPENING".equals(currentStatus) ? "active" : "" %>">
+            <a href="<%= ctx %>/alerts?status=OPENING<%= filterPreservedParams %>" class="status-tab-btn tab-open <%= "OPENING".equals(currentStatus) ? "active" : "" %>">
                 <span>Opening</span>
                 <span class="tab-count"><%= openCount %></span>
             </a>
-            <a href="<%= ctx %>/alerts?status=APPROVED<%= filterPreservedParams %>" onclick="filterByStatus('APPROVED'); return false;" class="status-tab-btn tab-acked <%= "APPROVED".equals(currentStatus) ? "active" : "" %>">
+            <a href="<%= ctx %>/alerts?status=APPROVED<%= filterPreservedParams %>" class="status-tab-btn tab-acked <%= "APPROVED".equals(currentStatus) ? "active" : "" %>">
                 <span>Approved</span>
                 <span class="tab-count"><%= ackedCount %></span>
             </a>
-            <a href="<%= ctx %>/alerts?status=REJECTED<%= filterPreservedParams %>" onclick="filterByStatus('REJECTED'); return false;" class="status-tab-btn tab-rejected <%= "REJECTED".equals(currentStatus) ? "active" : "" %>">
+            <a href="<%= ctx %>/alerts?status=REJECTED<%= filterPreservedParams %>" class="status-tab-btn tab-rejected <%= "REJECTED".equals(currentStatus) ? "active" : "" %>">
                 <span>Rejected</span>
                 <span class="tab-count"><%= rejectedCount %></span>
             </a>
@@ -1402,9 +1364,9 @@
                         <tr>
                             <th style="width: 60px; text-align: center;">No.</th>
                             <th style="width: 125px;">Alert Code</th>
+                            <th style="width: 130px;">Room Code</th>
                             <th style="width: 130px;">Type</th>
                             <th style="width: 150px;">Metric Status</th>
-                            <th style="width: 130px;">Room Code</th>
                             <th style="width: 140px;">Action Status</th>
                             <th style="width: 170px;">Time</th>
                             <th style="width: 110px; text-align: center;">Detail</th>
@@ -1453,16 +1415,6 @@
                                 <span class="alert-code-pill"><%= Web.esc(code) %></span>
                             </td>
                             <td>
-                                <span class="alert-type-badge <%= typeBadgeClass %>">
-                                    <%= Web.esc(alertType) %>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="level-tag <%= metricBadgeClass %>">
-                                    <%= Web.esc(metricStatus) %>
-                                </span>
-                            </td>
-                            <td>
                                 <% if (roomCode != null && !roomCode.trim().isEmpty()) { %>
                                     <a href="<%= ctx %>/admin/rooms/detail?id=<%= roomId != null ? roomId : "" %>" class="room-code-tag" title="View Room Detail">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -1471,6 +1423,16 @@
                                 <% } else { %>
                                     <span style="color: #94a3b8;">–</span>
                                 <% } %>
+                            </td>
+                            <td>
+                                <span class="alert-type-badge <%= typeBadgeClass %>">
+                                    <%= Web.esc(alertType) %>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="level-tag <%= metricBadgeClass %>">
+                                    <%= Web.esc(metricStatus) %>
+                                </span>
                             </td>
                             <td>
                                 <span class="alert-status-pill <%= statusPillClass %>">
@@ -1607,16 +1569,16 @@
                             <div><span id="modalAlertCodeBadge" class="alert-code-pill">–</span></div>
                         </div>
                         <div class="detail-item">
+                            <span class="detail-item-label">Room Code:</span>
+                            <div><span id="modalRoomCodeBadge" class="room-code-tag">–</span></div>
+                        </div>
+                        <div class="detail-item">
                             <span class="detail-item-label">Type:</span>
                             <div><span id="modalTypeBadge" class="alert-type-badge">–</span></div>
                         </div>
                         <div class="detail-item">
                             <span class="detail-item-label">Metric Status:</span>
                             <div><span id="modalMetricStatusBadge" class="level-tag tag-warning">–</span></div>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-item-label">Room Code:</span>
-                            <div><span id="modalRoomCodeBadge" class="room-code-tag">–</span></div>
                         </div>
                         <div class="detail-item">
                             <span class="detail-item-label">Action Status:</span>
@@ -1860,72 +1822,21 @@
             }
         });
 
-        // 5. Instant Zero-Reload Filtering for Stat Cards & Status Tabs
-        let currentActiveStatus = '<%= currentStatus != null ? currentStatus : "" %>';
-
+        // 5. Status Tabs Filter (Synchronized with Server & Database)
         function filterByStatus(status) {
-            // If clicking the same active status card (other than all), toggle back to all
-            if (status && currentActiveStatus === status) {
-                status = '';
-            }
-            currentActiveStatus = status || '';
-
-            // 1. Update hidden form input for sync
+            const form = document.getElementById('alertsFilterForm');
             const statusInput = document.getElementById('filterStatusInput');
-            if (statusInput) statusInput.value = currentActiveStatus;
-
-            // 2. Update active states on the 4 stats cards
-            const cards = document.querySelectorAll('.stats-cards-grid .stat-card');
-            cards.forEach(card => {
-                card.classList.remove('active', 'active-blue', 'active-amber', 'active-green', 'active-red');
-            });
-
-            if (!currentActiveStatus) {
-                if (cards[0]) cards[0].classList.add('active', 'active-blue');
-            } else if (currentActiveStatus === 'OPENING') {
-                if (cards[1]) cards[1].classList.add('active', 'active-amber');
-            } else if (currentActiveStatus === 'APPROVED' || currentActiveStatus === 'ACKED') {
-                if (cards[2]) cards[2].classList.add('active', 'active-green');
-            } else if (currentActiveStatus === 'REJECTED') {
-                if (cards[3]) cards[3].classList.add('active', 'active-red');
-            }
-
-            // 3. Update active states on status tabs
-            const tabs = document.querySelectorAll('.status-tabs .status-tab-btn');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            if (!currentActiveStatus && tabs[0]) tabs[0].classList.add('active');
-            else if (currentActiveStatus === 'OPENING' && tabs[1]) tabs[1].classList.add('active');
-            else if ((currentActiveStatus === 'APPROVED' || currentActiveStatus === 'ACKED') && tabs[2]) tabs[2].classList.add('active');
-            else if (currentActiveStatus === 'REJECTED' && tabs[3]) tabs[3].classList.add('active');
-
-            // 4. Check if rows exist in DOM for instant filtering
-            const rows = Array.from(document.querySelectorAll('.alerts-table tbody tr:not(.quick-search-empty)'));
-            const hasStatusRows = currentActiveStatus === '' || rows.some(r => {
-                const rs = (r.dataset.status || '').toUpperCase();
-                return currentActiveStatus === 'APPROVED' ? (rs === 'APPROVED' || rs === 'ACKED') : (rs === currentActiveStatus);
-            });
-
-            // If rows can be filtered in DOM, filter IMMEDIATELY with zero reload!
-            if (hasStatusRows || rows.length === 0) {
-                try {
-                    const url = new URL(window.location.href);
-                    if (currentActiveStatus) {
-                        url.searchParams.set('status', currentActiveStatus);
-                    } else {
-                        url.searchParams.delete('status');
-                    }
-                    window.history.replaceState({}, '', url.toString());
-                } catch (e) {}
-
-                applyTableFilters();
+            if (statusInput) statusInput.value = status || '';
+            if (form) {
+                form.submit();
             } else {
-                // If records are only on other pages from server, submit form
-                const form = document.getElementById('alertsFilterForm');
-                if (form) form.submit();
+                let url = '<%= ctx %>/alerts';
+                if (status) url += '?status=' + encodeURIComponent(status);
+                window.location.href = url;
             }
         }
 
-        // 6. Real-time Multi-Criteria Table Filtering (Status + Keystroke Query)
+        // 6. Real-time Keystroke Search for Current Table
         function applyTableFilters() {
             const tableBody = document.querySelector('.alerts-table tbody');
             if (!tableBody) return;
@@ -1953,7 +1864,7 @@
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                             <span style="font-weight: 600; color: #334155; font-size: 14px;">No alerts match the filter criteria</span>
-                            <span style="font-size: 12.5px; color: #94a3b8;">Click 'Total Alerts' card or '✕' to show all</span>
+                            <span style="font-size: 12.5px; color: #94a3b8;">Click 'All Alerts' tab or '✕' to show all</span>
                         </div>
                     </td>
                 `;
@@ -1965,21 +1876,10 @@
             let totalRows = rows.length;
 
             rows.forEach(r => {
-                const rowStatus = (r.dataset.status || '').toUpperCase();
-                let statusMatch = true;
-                if (currentActiveStatus) {
-                    const stNorm = currentActiveStatus.toUpperCase();
-                    if (stNorm === 'APPROVED' || stNorm === 'ACKED') {
-                        statusMatch = (rowStatus === 'APPROVED' || rowStatus === 'ACKED');
-                    } else {
-                        statusMatch = (rowStatus === stNorm);
-                    }
-                }
-
                 const text = r.textContent.toLowerCase();
                 let queryMatch = (!query || text.includes(query));
 
-                if (statusMatch && queryMatch) {
+                if (queryMatch) {
                     r.style.display = '';
                     matched++;
                 } else {
@@ -1987,18 +1887,17 @@
                 }
             });
 
-            if (matched === 0 && (query.length > 0 || currentActiveStatus)) {
+            if (matched === 0 && query.length > 0) {
                 emptyRow.style.display = '';
             } else {
                 emptyRow.style.display = 'none';
             }
 
             if (searchCountEl && defaultCountEl) {
-                if (query.length > 0 || currentActiveStatus) {
+                if (query.length > 0) {
                     defaultCountEl.style.display = 'none';
                     searchCountEl.style.display = 'inline';
-                    let statusLabel = currentActiveStatus ? (' • Status: ' + currentActiveStatus) : '';
-                    searchCountEl.textContent = 'Instant filter: Showing ' + matched + '/' + totalRows + ' alerts' + statusLabel;
+                    searchCountEl.textContent = 'Instant filter: Showing ' + matched + '/' + totalRows + ' alerts';
                 } else {
                     defaultCountEl.style.display = 'inline';
                     searchCountEl.style.display = 'none';
