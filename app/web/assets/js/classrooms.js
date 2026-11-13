@@ -62,10 +62,40 @@ function getMetricLevel(metric, val) {
 }
 
 function getRoomStatus(room) {
-    // Normal if no alerts, Warning if room has opening alerts
-    if (room && room.openAlerts && room.openAlerts > 0) {
+    if (!room) return "Normal";
+
+    // 1. Warning if room has opening alerts from database
+    if (room.openAlerts && room.openAlerts > 0) {
         return "Warning";
     }
+
+    // 2. Warning if any metric level is warning or danger
+    const tempLvl = getMetricLevel("temp", room.temp);
+    const humidLvl = getMetricLevel("humidity", room.humidity);
+    const co2Lvl = getMetricLevel("co2", room.co2);
+    const coLvl = getMetricLevel("co", room.co);
+
+    if (tempLvl === "warning" || tempLvl === "danger" ||
+        humidLvl === "warning" || humidLvl === "danger" ||
+        co2Lvl === "warning" || co2Lvl === "danger" ||
+        coLvl === "warning" || coLvl === "danger") {
+        return "Warning";
+    }
+
+    // 3. Warning if any metric exceeds room-specific warning thresholds from database
+    if (room.temp != null && room.tempWarningThreshold && room.temp > room.tempWarningThreshold) {
+        return "Warning";
+    }
+    if (room.humidity != null && room.humidWarningThreshold && room.humidity > room.humidWarningThreshold) {
+        return "Warning";
+    }
+    if (room.co2 != null && room.co2WarningThreshold && room.co2 > room.co2WarningThreshold) {
+        return "Warning";
+    }
+    if (room.co != null && room.coWarningThreshold && room.co > room.coWarningThreshold) {
+        return "Warning";
+    }
+
     return "Normal";
 }
 
@@ -189,10 +219,10 @@ function renderRoomCard(room) {
     const roomImg = room.image || defaultThumbnail;
     const roomDisplayName = room.name || room.location || `Room ${room.id}`;
 
-    // Status badge: Warning if room has opening alerts, otherwise Normal
-    const hasOpeningAlert = Boolean(room && room.openAlerts && room.openAlerts > 0);
-    const statusText = hasOpeningAlert ? "Warning" : "Normal";
-    const statusClass = hasOpeningAlert ? "status-warning" : "status-normal";
+    // Status badge: Warning if room has opening alerts or any metric in warning/danger, otherwise Normal
+    const isWarning = (getRoomStatus(room) === "Warning");
+    const statusText = isWarning ? "Warning" : "Normal";
+    const statusClass = isWarning ? "status-warning" : "status-normal";
 
     return `
         <div class="classroom-card">
